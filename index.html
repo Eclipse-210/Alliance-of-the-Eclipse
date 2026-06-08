@@ -13,55 +13,32 @@ box-sizing:border-box;
 font-family:Segoe UI,sans-serif;
 }
 
-body{
+html,body{
+height:100%;
 overflow:hidden;
 background:#000;
 color:#fff;
 }
 
-/* ⭐ фон */
+/* ⭐ CANVAS — просто нижний слой */
 #bg{
 position:fixed;
 inset:0;
-z-index:-1;
+z-index:0;
 pointer-events:none;
 }
 
-/* UI слой */
+/* UI — ВСЕГДА выше canvas */
 .left{
 position:fixed;
 top:10px;
 left:10px;
-z-index:100;
+z-index:10;
 }
 
-.btn{
-padding:10px 18px;
-border:none;
-border-radius:999px;
-background:linear-gradient(45deg,#6b2cff,#b47cff);
-color:#fff;
-font-weight:700;
-cursor:pointer;
-transition:0.2s;
-}
-
-.btn:hover{
-transform:scale(1.05);
-}
-
-/* большая кнопка */
-.big-btn{
-padding:16px 28px;
-font-size:1.1rem;
-background:linear-gradient(45deg,#6b2cff,#ff4fd8);
-box-shadow:0 0 25px rgba(180,120,255,.4);
-}
-
-/* центр */
 .c{
 position:relative;
-z-index:100;
+z-index:10;
 height:100vh;
 display:flex;
 flex-direction:column;
@@ -72,6 +49,29 @@ gap:14px;
 transform: translateY(-90px);
 }
 
+.btn{
+padding:10px 18px;
+border:none;
+border-radius:999px;
+background:linear-gradient(45deg,#6b2cff,#b47cff);
+color:#fff;
+font-weight:700;
+cursor:pointer;
+pointer-events:auto;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+.big-btn{
+padding:16px 28px;
+font-size:1.1rem;
+background:linear-gradient(45deg,#6b2cff,#ff4fd8);
+box-shadow:0 0 25px rgba(180,120,255,.4);
+}
+
+/* текст */
 .top-text{
 font-size:1.2rem;
 opacity:0.8;
@@ -128,7 +128,6 @@ bg.height = innerHeight;
 
 let stars = [];
 
-/* ⭐ больше и быстрее звёзды */
 for (let i = 0; i < 600; i++) {
 stars.push({
 x: Math.random() * bg.width,
@@ -145,17 +144,14 @@ function draw() {
 ctx.fillStyle = "rgba(0,0,0,0.35)";
 ctx.fillRect(0,0,bg.width,bg.height);
 
-/* центр дыры (чуть выше) */
 let cx = bg.width/2;
 let cy = bg.height/2 - 40;
 
 for (let s of stars) {
 
-/* хаотичность космоса */
 s.vx += (Math.random() - 0.5) * 0.04;
 s.vy += (Math.random() - 0.5) * 0.04;
 
-/* гравитация */
 let dx = cx - s.x;
 let dy = cy - s.y;
 let dist = Math.sqrt(dx*dx + dy*dy);
@@ -166,48 +162,37 @@ s.vx += dx * force * 0.018;
 s.vy += dy * force * 0.018;
 }
 
-/* движение */
 s.x += s.vx;
 s.y += s.vy;
 
-/* трение */
 s.vx *= 0.992;
 s.vy *= 0.992;
 
-/* ⭐ СПАГЕТТИФИКАЦИЯ */
+/* спагеттификация */
 if (dist < 140) {
-
 ctx.strokeStyle = `rgba(180,120,255,0.6)`;
-ctx.lineWidth = Math.max(0.5, (140 - dist)/55);
+ctx.lineWidth = Math.max(0.5,(140-dist)/55);
 
 ctx.beginPath();
-ctx.moveTo(s.x, s.y);
-ctx.lineTo(
-s.x - s.vx * 7,
-s.y - s.vy * 7
-);
+ctx.moveTo(s.x,s.y);
+ctx.lineTo(s.x - s.vx*7, s.y - s.vy*7);
 ctx.stroke();
-
 } else {
-
-/* обычная звезда */
 s.tw += 0.04;
 let alpha = 0.3 + Math.sin(s.tw)*0.5;
 
 ctx.fillStyle = `rgba(180,120,255,${alpha})`;
 ctx.beginPath();
-ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
 ctx.fill();
 }
 
-/* пересоздание если упала в дыру */
 if (dist < 10) {
 s.x = Math.random()*bg.width;
 s.y = Math.random()*bg.height;
 s.vx = 0;
 s.vy = 0;
 }
-
 }
 
 requestAnimationFrame(draw);
@@ -215,7 +200,6 @@ requestAnimationFrame(draw);
 
 draw();
 
-/* resize fix */
 window.addEventListener("resize", () => {
 bg.width = innerWidth;
 bg.height = innerHeight;
