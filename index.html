@@ -10,8 +10,57 @@ body{overflow:hidden;background:#000;color:#fff}
 
 .c{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .l{font-size:clamp(3rem,7vw,6rem);font-weight:900;background:linear-gradient(90deg,#b47cff,#6b2cff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.bh{width:210px;height:210px;border-radius:50%;margin:20px;background:radial-gradient(circle at 30% 30%,#1b0020,#000 60%);box-shadow:0 0 80px #7b2cff;animation:p 4s infinite}
-@keyframes p{50%{transform:scale(1.06)}}
+
+/* BLACK HOLE */
+.bh{
+width:220px;height:220px;border-radius:50%;
+margin:20px;
+position:relative;
+background:radial-gradient(circle at 30% 30%,#120012,#000 65%);
+box-shadow:0 0 90px rgba(123,44,255,.6);
+animation:spin 8s linear infinite;
+}
+
+/* INNER CORE */
+.bh:before{
+content:"";
+position:absolute;
+inset:20px;
+border-radius:50%;
+background:radial-gradient(circle,#000 40%,#1a001f 100%);
+}
+
+/* RING SYSTEM */
+.bh:after{
+content:"";
+position:absolute;
+inset:-35px;
+border-radius:50%;
+background:conic-gradient(
+from 0deg,
+transparent 0deg,
+rgba(180,120,255,.0) 40deg,
+rgba(180,120,255,.8) 90deg,
+rgba(255,80,200,.4) 140deg,
+transparent 220deg,
+rgba(120,60,255,.6) 280deg,
+transparent 360deg
+);
+filter:blur(2px);
+opacity:.8;
+animation:ring 6s linear infinite;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg) scale(1)}
+50%{transform:rotate(180deg) scale(1.05)}
+100%{transform:rotate(360deg) scale(1)}
+}
+
+@keyframes ring{
+0%{transform:rotate(0deg) scale(1)}
+100%{transform:rotate(360deg) scale(1)}
+}
 
 /* MODAL */
 .o{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:30}
@@ -31,6 +80,7 @@ body{overflow:hidden;background:#000;color:#fff}
 
 <div class="c">
 <div class="l">ECLIPSE</div>
+
 <div class="bh"></div>
 
 <button class="btn" onclick="window.open('https://discord.gg/eDNTK7cHpJ','_blank')">
@@ -53,68 +103,29 @@ body{overflow:hidden;background:#000;color:#fff}
 
 <script>
 
-/* ===== COSMIC BACKGROUND ===== */
+/* COSMIC BACKGROUND */
 const bg=document.getElementById("bg"),x=bg.getContext("2d");
 bg.width=innerWidth;bg.height=innerHeight;
 
-/* 3 layers of stars */
-let s1=[...Array(120)].map(()=>randomStar(1));
-let s2=[...Array(80)].map(()=>randomStar(2));
-let s3=[...Array(60)].map(()=>randomStar(3));
-
-function randomStar(layer){
-return{
-x:Math.random()*bg.width,
-y:Math.random()*bg.height,
-z:Math.random()*1,
-l:layer
-}
-}
-
-/* floating particles */
-let p=[...Array(40)].map(()=>({
-x:Math.random()*bg.width,
-y:Math.random()*bg.height,
-vx:(Math.random()-0.5)*0.3,
-vy:(Math.random()-0.5)*0.3,
-r:Math.random()*2+0.5
+let s=[...Array(160)].map(()=>({
+x:(Math.random()-0.5)*bg.width,
+y:(Math.random()-0.5)*bg.height,
+z:Math.random()*bg.width
 }));
 
 function draw(){
 x.fillStyle="#000";
 x.fillRect(0,0,bg.width,bg.height);
 
-/* stars */
-drawLayer(s1,0.6);
-drawLayer(s2,1);
-drawLayer(s3,1.4);
-
-/* particles */
-for(let o of p){
-o.x+=o.vx;o.y+=o.vy;
-if(o.x<0)o.x=bg.width;
-if(o.x>bg.width)o.x=0;
-if(o.y<0)o.y=bg.height;
-if(o.y>bg.height)o.y=0;
-
+for(let p of s){
+p.z-=1.5;if(p.z<=0)p.z=bg.width;
+let k=120/p.z;
 x.fillStyle="rgba(180,120,255,.7)";
-x.beginPath();
-x.arc(o.x,o.y,o.r,0,Math.PI*2);
-x.fill();
+x.fillRect(p.x*k+bg.width/2,p.y*k+bg.height/2,2,2);
 }
 
 requestAnimationFrame(draw);
 }
-
-function drawLayer(arr,speed){
-for(let s of arr){
-s.y+=speed;
-if(s.y>bg.height)s.y=0;
-x.fillStyle="rgba(200,160,255,.6)";
-x.fillRect(s.x,s.y,1.5,1.5);
-}
-}
-
 draw();
 
 /* MODAL */
