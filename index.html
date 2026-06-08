@@ -1,244 +1,166 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Alliance of the Eclipse</title>
-
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eclipse</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
-body{height:100vh;overflow:hidden;background:#000;color:#fff}
+body{overflow:hidden;background:#000;color:#fff}
 
-/* ===== SPACE ===== */
-.space{
-  position:fixed;inset:0;
-  background:radial-gradient(circle at center,#1a0b33,#05010a,#000);
-  overflow:hidden;
-}
+/* 3D SPACE CANVAS */
+#bg{position:fixed;inset:0;z-index:0}
 
-/* GALAXY */
-.galaxy{
-  position:absolute;
-  width:1200px;height:1200px;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  background:conic-gradient(#7b2cff33,#0000,#4a00ff33,#0000,#c026ff33);
-  filter:blur(40px);
-  animation:spin 45s linear infinite;
-  opacity:.7;
-}
-@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+/* UI */
+.c{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.t{opacity:.7;letter-spacing:8px}
+.l{font-size:clamp(3rem,7vw,6rem);font-weight:900;background:linear-gradient(90deg,#b47cff,#6b2cff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.bh{width:210px;height:210px;border-radius:50%;margin:20px;background:radial-gradient(circle at 30% 30%,#1b0020,#000 60%);box-shadow:0 0 80px #7b2cff;animation:p 4s infinite}
+@keyframes p{50%{transform:scale(1.06)}}
+.btn{padding:12px 28px;margin:6px;border:none;border-radius:999px;background:linear-gradient(45deg,#6b2cff,#b47cff);color:#fff;font-weight:700;cursor:pointer}
 
-/* STARS */
-#stars{position:absolute;inset:0}
-.star{position:absolute;background:#fff;border-radius:50%;animation:tw 4s infinite}
-@keyframes tw{50%{opacity:1}}
+/* TOP BUTTON */
+.minig{position:fixed;top:10px;right:10px;z-index:10}
 
-/* PLANETS */
-.planet{
-  position:absolute;border-radius:50%;
-  box-shadow:0 0 50px rgba(150,80,255,.4);
-  animation:float 6s ease-in-out infinite;
-}
-@keyframes float{50%{transform:translateY(-15px)}}
-.p1{width:140px;height:140px;top:80px;left:80px;background:#6e36ff}
-.p2{width:90px;height:90px;right:90px;bottom:70px;background:#9b5cff}
+/* MODALS */
+.o{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:20}
+.m{background:rgba(255,255,255,.06);padding:15px;border-radius:15px;border:1px solid rgba(255,255,255,.1)}
 
-/* CURSOR */
-.cursor{
-  position:fixed;width:300px;height:300px;
-  background:radial-gradient(circle,rgba(180,100,255,.25),transparent 60%);
-  border-radius:50%;pointer-events:none;
-  transform:translate(-50%,-50%);
-}
+/* CLANS */
+.cl{padding:8px;margin:6px;background:rgba(255,255,255,.05);border-radius:8px;cursor:pointer}
 
-/* CENTER */
-.c{
-  position:relative;z-index:10;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-}
+/* TETRIS */
+#t{background:#000;border:1px solid #444}
 
-.tag{letter-spacing:10px;opacity:.7}
-
-.logo{
-  font-size:clamp(3rem,7vw,6rem);
-  font-weight:900;
-  background:linear-gradient(90deg,#b47cff,#6b2cff,#ff4fd8);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:glow 3s infinite;
-}
-@keyframes glow{50%{filter:drop-shadow(0 0 25px #7b2cff)}}
-
-.sub{max-width:600px;margin:15px auto;color:#d0c0ff}
-
-/* CORE */
-.core{
-  width:220px;height:220px;
-  border-radius:50%;
-  margin:30px auto;
-  background:radial-gradient(circle,#0a0018,#000);
-  box-shadow:0 0 80px rgba(120,60,255,.3);
-  animation:pulse 5s infinite;
-}
-@keyframes pulse{50%{transform:scale(1.05)}}
-
-/* BUTTONS */
-.btn{
-  padding:14px 35px;
-  border:none;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
-  margin:10px;
-  color:#fff;
-  background:linear-gradient(45deg,#6b2cff,#b47cff);
-  transition:.3s;
-}
-.btn:hover{transform:scale(1.08)}
-
-/* ===== CLAN BUTTON ===== */
-.clan-btn{
-  background:linear-gradient(45deg,#ff4fd8,#6b2cff);
-}
-
-/* ===== CLAN MENU ===== */
-.overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.6);
-  backdrop-filter:blur(10px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:50;
-}
-
-.menu{
-  width:320px;
-  padding:25px;
-  border-radius:20px;
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.1);
-  box-shadow:0 0 80px rgba(120,60,255,.3);
-  animation:pop .4s ease;
-}
-
-@keyframes pop{
-  from{transform:scale(.7);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-
-.menu h2{
-  margin-bottom:15px;
-  text-align:center;
-  color:#fff;
-  letter-spacing:3px;
-}
-
-.clan{
-  padding:10px;
-  margin:8px 0;
-  border-radius:10px;
-  background:rgba(255,255,255,.05);
-  transition:.3s;
-  cursor:pointer;
-}
-.clan:hover{
-  background:rgba(180,100,255,.2);
-  transform:translateX(5px);
-}
-.close{
-  margin-top:10px;
-  text-align:center;
-  cursor:pointer;
-  opacity:.7;
-}
-.close:hover{opacity:1}
-</style>
-</head>
+/* CONTROLS TEXT */
+small{opacity:.7}
+</style></head>
 
 <body>
 
-<div class="space">
-  <div class="galaxy"></div>
-  <div id="stars"></div>
+<canvas id="bg"></canvas>
 
-  <div class="planet p1"></div>
-  <div class="planet p2"></div>
+<div class="minig">
+<button class="btn" onclick="openT()">Мини-игры</button>
+<button class="btn" onclick="openC()">Кланы</button>
 </div>
-
-<div class="cursor" id="cursor"></div>
 
 <div class="c">
-  <div class="tag">ALLIANCE OF THE</div>
-  <div class="logo">ECLIPSE</div>
-
-  <p class="sub">Альянс пробуждается среди звёзд. Выбери свой путь.</p>
-
-  <div class="core"></div>
-
-  <button class="btn" onclick="window.open('https://discord.gg/eDNTK7cHpJ','_blank')">
-    Войти в Альянс
-  </button>
-
-  <button class="btn clan-btn" onclick="openMenu()">
-    Кланы Альянса
-  </button>
+<div class="t">ALLIANCE OF THE</div>
+<div class="l">ECLIPSE</div>
+<div class="bh"></div>
+<button class="btn" onclick="window.open('https://discord.gg/eDNTK7cHpJ','_blank')">Альянс</button>
 </div>
 
-<!-- MENU -->
-<div class="overlay" id="overlay" onclick="closeMenu(event)">
-  <div class="menu">
-    <h2>КЛАНЫ</h2>
+<!-- CLANS -->
+<div class="o" id="cl" onclick="closeM(event)">
+<div class="m">
+<div class="cl" onclick="window.open('https://discord.gg/WnSjf542Qx','_blank')">🌌 Nebula</div>
+<div class="cl">💧 Культ воды</div>
+<div class="cl">✨ Люкверианство</div>
+<div class="cl">🤖 ИИ</div>
+<div class="cl">👁 Imperial of Golden Eye</div>
+</div>
+</div>
 
-    <div class="clan">💧 Культ воды</div>
-    <div class="clan">✨ Люкверианство</div>
-    <div class="clan">🌌 Nebula</div>
-    <div class="clan">🤖 ИИ</div>
-    <div class="clan">👁 Imperial of Golden Eye</div>
-
-    <div class="close" onclick="closeMenu()">Закрыть ✕</div>
-  </div>
+<!-- TETRIS -->
+<div class="o" id="tr" onclick="closeM(event)">
+<div class="m">
+<canvas id="t" width="200" height="400"></canvas>
+<br><small>← → движение | ↑ поворот | ↓ ускорение</small>
+</div>
 </div>
 
 <script>
 
-/* STARS */
-const s=document.getElementById("stars");
-for(let i=0;i<300;i++){
-  let d=document.createElement("div");
-  d.className="star";
-  let z=Math.random()*2+1;
-  d.style.width=z+"px";
-  d.style.height=z+"px";
-  d.style.left=Math.random()*100+"%";
-  d.style.top=Math.random()*100+"%";
-  s.appendChild(d);
+/* ===== 3D SPACE ===== */
+const c=document.getElementById("bg"),x=c.getContext("2d");
+c.width=innerWidth;c.height=innerHeight;
+let s=[...Array(250)].map(()=>({
+x:(Math.random()-0.5)*c.width,
+y:(Math.random()-0.5)*c.height,
+z:Math.random()*c.width
+}));
+function d(){
+x.fillStyle="#000";x.fillRect(0,0,c.width,c.height);
+for(let p of s){
+p.z-=2;if(p.z<=0)p.z=c.width;
+let k=128/p.z;
+let sx=p.x*k+c.width/2;
+let sy=p.y*k+c.height/2;
+if(sx<0||sx>c.width||sy<0||sy>c.height)continue;
+x.fillStyle="#b47cff";
+x.fillRect(sx,sy,2,2);
+}
+requestAnimationFrame(d);
+}
+d();
+
+/* ===== MODALS ===== */
+let cl=document.getElementById("cl"),tr=document.getElementById("tr");
+function openC(){cl.style.display="flex"}
+function openT(){tr.style.display="flex"}
+function closeM(e){if(!e||e.target.classList.contains("o")){cl.style.display="none";tr.style.display="none"}}
+
+/* ===== TETRIS ===== */
+const g=document.getElementById("t"),g2=g.getContext("2d");
+const W=10,H=20,S=20;
+let board=[...Array(H)].map(()=>Array(W).fill(0));
+
+let piece=[[1,1,1,1]],x0=3,y0=0;
+
+function draw(){
+g2.fillStyle="#000";g2.fillRect(0,0,g.width,g.height);
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+if(board[y][x]){g2.fillStyle="#7b2cff";g2.fillRect(x*S,y*S,S-1,S-1)}
+}
+for(let y=0;y<piece.length;y++)
+for(let x=0;x<piece[y].length;x++)
+if(piece[y][x]){
+g2.fillStyle="#b47cff";
+g2.fillRect((x0+x)*S,(y0+y)*S,S-1,S-1);
+}
 }
 
-/* CURSOR */
-const c=document.getElementById("cursor");
-document.addEventListener("mousemove",e=>{
-  c.style.left=e.clientX+"px";
-  c.style.top=e.clientY+"px";
+function tick(){
+y0++;
+if(coll()){
+y0--;merge();clear();y0=0;
+}
+draw();
+requestAnimationFrame(tick);
+}
+
+function coll(){
+for(let y=0;y<piece.length;y++)
+for(let x=0;x<piece[y].length;x++)
+if(piece[y][x]){
+let nx=x0+x,ny=y0+y;
+if(ny>=H||nx<0||nx>=W||board[ny]?.[nx])return true;
+}
+return false;
+}
+
+function merge(){
+for(let y=0;y<piece.length;y++)
+for(let x=0;x<piece[y].length;x++)
+if(piece[y][x])board[y0+y][x0+x]=1;
+}
+
+function clear(){
+for(let y=H-1;y>=0;y--)
+if(board[y].every(v=>v)){
+board.splice(y,1);
+board.unshift(Array(W).fill(0));
+}
+}
+
+document.addEventListener("keydown",e=>{
+if(tr.style.display!="flex")return;
+if(e.key=="ArrowLeft")x0--;
+if(e.key=="ArrowRight")x0++;
+if(e.key=="ArrowDown")y0++;
+if(e.key=="ArrowUp")piece=piece[0].map((_,i)=>piece.map(r=>r[i]).reverse());
+if(coll()){if(e.key=="ArrowLeft")x0++;if(e.key=="ArrowRight")x0--;if(e.key=="ArrowDown")y0--}
 });
 
-/* MENU */
-function openMenu(){
-  document.getElementById("overlay").style.display="flex";
-}
-function closeMenu(e){
-  if(!e || e.target.id==="overlay"){
-    document.getElementById("overlay").style.display="none";
-  }
-}
+draw();tick();
 
 </script>
 
-</body>
-</html>
+</body></html>
