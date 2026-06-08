@@ -2,25 +2,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
 body{overflow:hidden;background:#000;color:#fff}
-
-/* BACKGROUND CANVAS */
 #bg{position:fixed;inset:0;z-index:0}
-
-/* FLOAT ORBS */
-.orb{
-position:fixed;
-width:120px;height:120px;
-border-radius:50%;
-background:radial-gradient(circle,rgba(180,120,255,.35),transparent 60%);
-filter:blur(10px);
-opacity:.6;
-animation:float 12s infinite ease-in-out;
-pointer-events:none;
-}
-@keyframes float{
-0%,100%{transform:translate(0,0) scale(1)}
-50%{transform:translate(40px,-60px) scale(1.3)}
-}
 
 /* UI */
 .left{position:fixed;top:10px;left:10px;z-index:20;display:flex;flex-direction:column;gap:6px}
@@ -43,12 +25,6 @@ pointer-events:none;
 
 <canvas id="bg"></canvas>
 
-<!-- glowing orbs -->
-<div class="orb" style="top:10%;left:15%"></div>
-<div class="orb" style="top:70%;left:20%;animation-delay:-4s"></div>
-<div class="orb" style="top:40%;left:80%;animation-delay:-8s"></div>
-<div class="orb" style="top:80%;left:70%;animation-delay:-2s"></div>
-
 <div class="left">
 <button class="btn" onclick="openC()">Кланы</button>
 </div>
@@ -66,57 +42,82 @@ pointer-events:none;
 <div class="o" id="cl" onclick="closeM(event)">
 <div class="m">
 
-<div class="cl" onclick="window.open('https://discord.gg/UFcfHVH5gz','_blank')">
-💧 Культ воды
-</div>
-
-<div class="cl" onclick="window.open('https://discord.gg/WnSjf542Qx','_blank')">
-🌌 Nebula
-</div>
-
-<div class="cl" onclick="window.open('https://discord.gg/yCUk3xDRsk','_blank')">
-✨ Люкверианство
-</div>
-
-<div class="cl">
-🤖 ИИ
-</div>
-
-<div class="cl">
-👁 Imperial of Golden Eye
-</div>
+<div class="cl" onclick="window.open('https://discord.gg/UFcfHVH5gz','_blank')">💧 Культ воды</div>
+<div class="cl" onclick="window.open('https://discord.gg/WnSjf542Qx','_blank')">🌌 Nebula</div>
+<div class="cl" onclick="window.open('https://discord.gg/yCUk3xDRsk','_blank')">✨ Люкверианство</div>
+<div class="cl">🤖 ИИ</div>
+<div class="cl">👁 Imperial of Golden Eye</div>
 
 </div>
 </div>
 
 <script>
 
-/* SPACE BACKGROUND */
+/* ===== COSMIC BACKGROUND ===== */
 const bg=document.getElementById("bg"),x=bg.getContext("2d");
 bg.width=innerWidth;bg.height=innerHeight;
 
-let s=[...Array(180)].map(()=>({
-x:(Math.random()-0.5)*bg.width,
-y:(Math.random()-0.5)*bg.height,
-z:Math.random()*bg.width
+/* 3 layers of stars */
+let s1=[...Array(120)].map(()=>randomStar(1));
+let s2=[...Array(80)].map(()=>randomStar(2));
+let s3=[...Array(60)].map(()=>randomStar(3));
+
+function randomStar(layer){
+return{
+x:Math.random()*bg.width,
+y:Math.random()*bg.height,
+z:Math.random()*1,
+l:layer
+}
+}
+
+/* floating particles */
+let p=[...Array(40)].map(()=>({
+x:Math.random()*bg.width,
+y:Math.random()*bg.height,
+vx:(Math.random()-0.5)*0.3,
+vy:(Math.random()-0.5)*0.3,
+r:Math.random()*2+0.5
 }));
 
 function draw(){
 x.fillStyle="#000";
 x.fillRect(0,0,bg.width,bg.height);
 
-for(let p of s){
-p.z-=1.5;if(p.z<=0)p.z=bg.width;
-let k=120/p.z;
-x.fillStyle="rgba(180,120,255,.8)";
-x.fillRect(p.x*k+bg.width/2,p.y*k+bg.height/2,2,2);
+/* stars */
+drawLayer(s1,0.6);
+drawLayer(s2,1);
+drawLayer(s3,1.4);
+
+/* particles */
+for(let o of p){
+o.x+=o.vx;o.y+=o.vy;
+if(o.x<0)o.x=bg.width;
+if(o.x>bg.width)o.x=0;
+if(o.y<0)o.y=bg.height;
+if(o.y>bg.height)o.y=0;
+
+x.fillStyle="rgba(180,120,255,.7)";
+x.beginPath();
+x.arc(o.x,o.y,o.r,0,Math.PI*2);
+x.fill();
 }
 
 requestAnimationFrame(draw);
 }
+
+function drawLayer(arr,speed){
+for(let s of arr){
+s.y+=speed;
+if(s.y>bg.height)s.y=0;
+x.fillStyle="rgba(200,160,255,.6)";
+x.fillRect(s.x,s.y,1.5,1.5);
+}
+}
+
 draw();
 
-/* MODALS */
+/* MODAL */
 let cl=document.getElementById("cl");
 function openC(){cl.style.display="flex"}
 function closeM(e){if(!e||e.target.classList.contains("o"))cl.style.display="none"}
