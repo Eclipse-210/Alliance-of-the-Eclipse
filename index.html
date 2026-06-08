@@ -11,35 +11,35 @@ body{overflow:hidden;background:#000;color:#fff}
 .c{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .l{font-size:clamp(3rem,7vw,6rem);font-weight:900;background:linear-gradient(90deg,#b47cff,#6b2cff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-/* BLACK HOLE CORE */
+/* BLACK HOLE (FIXED ROUND CORE) */
 .bh{
 width:240px;height:240px;border-radius:50%;
 position:relative;
 background:radial-gradient(circle at 30% 30%,#0a0010,#000 70%);
 box-shadow:0 0 90px rgba(140,60,255,.6);
-transform:rotateX(65deg) rotateZ(25deg);
 }
 
-/* INNER CORE */
+/* CORE (perfect circle, no distortion) */
 .bh:before{
 content:"";
 position:absolute;
-inset:40px;
+inset:45px;
 border-radius:50%;
-background:radial-gradient(circle,#000 40%,#120018 100%);
+background:radial-gradient(circle,#000 35%,#120018 100%);
+box-shadow:inset 0 0 40px rgba(0,0,0,.8);
 }
 
-/* TILTED ACCRETION RINGS */
+/* TILTED ACCRETION DISC (only this is “3D”) */
 .bh:after{
 content:"";
 position:absolute;
-inset:-60px;
+inset:-55px;
 border-radius:50%;
 background:
 conic-gradient(
 from 0deg,
 transparent 0deg,
-rgba(180,120,255,.0) 25deg,
+rgba(180,120,255,.0) 20deg,
 rgba(180,120,255,.9) 70deg,
 transparent 120deg,
 rgba(255,90,220,.5) 170deg,
@@ -47,17 +47,18 @@ transparent 240deg,
 rgba(120,60,255,.7) 310deg,
 transparent 360deg
 );
-mask:radial-gradient(circle,transparent 55%,#000 70%);
-filter:blur(1.5px);
+mask:radial-gradient(circle,transparent 58%,#000 72%);
+filter:blur(1.3px);
 opacity:.85;
-animation:spin 10s linear infinite;
 
-/* perspective tilt */
-transform:rotateX(70deg) rotateZ(0deg);
+/* real tilt without squashing core */
+transform:rotateX(75deg) rotateZ(0deg);
+transform-origin:center;
+animation:spin 10s linear infinite;
 }
 
 @keyframes spin{
-to{transform:rotateX(70deg) rotateZ(360deg)}
+to{transform:rotateX(75deg) rotateZ(360deg)}
 }
 </style></head>
 
@@ -71,13 +72,15 @@ to{transform:rotateX(70deg) rotateZ(360deg)}
 
 <div class="c">
 <div class="l">ECLIPSE</div>
+
 <div class="bh"></div>
+
 <button class="btn">Вступить в Альянс</button>
 </div>
 
 <script>
 
-/* ===== COSMIC GRAVITY BACKGROUND ===== */
+/* COSMIC BACKGROUND */
 const bg=document.getElementById("bg"),x=bg.getContext("2d");
 bg.width=innerWidth;bg.height=innerHeight;
 
@@ -105,7 +108,7 @@ let dx=cx-s.x;
 let dy=cy-s.y;
 let dist=Math.sqrt(dx*dx+dy*dy)+1;
 
-/* gravity pull */
+/* gravity */
 let f=140/dist;
 s.vx+=dx/dist*f*0.02;
 s.vy+=dy/dist*f*0.02;
