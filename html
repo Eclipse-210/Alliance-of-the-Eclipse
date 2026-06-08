@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alliance of the Eclipse</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    overflow:hidden;
+    background:radial-gradient(circle at center,
+    #1b1035 0%,
+    #090712 40%,
+    #000000 100%);
+    color:white;
+}
+
+/* ===== ЗВЁЗДЫ ===== */
+
+.stars{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+}
+
+.stars-small{
+    background:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,.9) 1px, transparent 2px),
+        radial-gradient(circle at 25% 70%, rgba(255,255,255,.8) 1px, transparent 2px),
+        radial-gradient(circle at 50% 10%, rgba(255,255,255,.9) 1px, transparent 2px),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,.8) 1px, transparent 2px),
+        radial-gradient(circle at 95% 80%, rgba(255,255,255,.9) 1px, transparent 2px),
+        radial-gradient(circle at 65% 90%, rgba(255,255,255,.7) 1px, transparent 2px),
+        radial-gradient(circle at 15% 90%, rgba(255,255,255,.9) 1px, transparent 2px),
+        radial-gradient(circle at 75% 55%, rgba(255,255,255,.8) 1px, transparent 2px);
+    animation:twinkle1 5s ease-in-out infinite alternate;
+}
+
+.stars-medium{
+    background:
+        radial-gradient(circle at 15% 40%, rgba(220,220,255,1) 2px, transparent 4px),
+        radial-gradient(circle at 40% 80%, rgba(255,255,255,1) 2px, transparent 4px),
+        radial-gradient(circle at 70% 15%, rgba(220,220,255,1) 2px, transparent 4px),
+        radial-gradient(circle at 85% 65%, rgba(255,255,255,1) 2px, transparent 4px),
+        radial-gradient(circle at 60% 45%, rgba(220,220,255,1) 2px, transparent 4px);
+    animation:twinkle2 7s ease-in-out infinite alternate;
+}
+
+.stars-large{
+    background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,1) 4px, transparent 6px),
+        radial-gradient(circle at 60% 55%, rgba(220,220,255,1) 4px, transparent 6px),
+        radial-gradient(circle at 90% 20%, rgba(255,255,255,1) 5px, transparent 8px),
+        radial-gradient(circle at 12% 55%, rgba(255,255,255,1) 4px, transparent 6px);
+    filter:blur(.5px);
+    animation:twinkle3 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle1{
+    0%{opacity:.35;}
+    50%{opacity:.8;}
+    100%{opacity:.45;}
+}
+
+@keyframes twinkle2{
+    0%{opacity:.4;}
+    50%{opacity:1;}
+    100%{opacity:.6;}
+}
+
+@keyframes twinkle3{
+    0%{
+        opacity:.5;
+        transform:scale(1);
+    }
+    100%{
+        opacity:1;
+        transform:scale(1.05);
+    }
+}
+
+/* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+
+.container{
+    position:relative;
+    z-index:10;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+}
+
+.logo{
+    font-size:clamp(3rem,8vw,5rem);
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:6px;
+    text-shadow:
+        0 0 15px #8a2be2,
+        0 0 35px #8a2be2,
+        0 0 60px #4a00ff;
+}
+
+.subtitle{
+    margin-top:15px;
+    font-size:1.3rem;
+    color:#cfc3ff;
+    max-width:700px;
+}
+
+/* ===== ЗАТМЕНИЕ ===== */
+
+.eclipse{
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:black;
+    position:relative;
+    margin:40px 0;
+
+    box-shadow:
+        0 0 40px #7d3cff,
+        0 0 80px #4a00ff,
+        0 0 120px #25005a;
+
+    animation:eclipseGlow 6s ease-in-out infinite;
+}
+
+.eclipse::before{
+    content:'';
+    position:absolute;
+    inset:-12px;
+    border-radius:50%;
+    border:3px solid rgba(145,90,255,.5);
+}
+
+@keyframes eclipseGlow{
+    0%,100%{
+        box-shadow:
+            0 0 40px #7d3cff,
+            0 0 80px #4a00ff,
+            0 0 120px #25005a;
+    }
+
+    50%{
+        box-shadow:
+            0 0 60px #9d6bff,
+            0 0 120px #6f42ff,
+            0 0 180px #3d008f;
+    }
+}
+
+/* ===== КНОПКА ===== */
+
+.join-btn{
+    padding:18px 42px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+
+    font-size:1.2rem;
+    font-weight:700;
+    color:white;
+
+    background:linear-gradient(
+        45deg,
+        #6f00ff,
+        #9f5cff
+    );
+
+    box-shadow:0 0 25px #7d3cff;
+
+    transition:.3s;
+}
+
+.join-btn:hover{
+    transform:translateY(-3px) scale(1.05);
+
+    box-shadow:
+        0 0 20px #9f5cff,
+        0 0 40px #9f5cff,
+        0 0 80px #6f00ff;
+}
+
+.footer{
+    margin-top:25px;
+    color:#888;
+    font-size:.9rem;
+}
+</style>
+</head>
+<body>
+
+<div class="stars stars-small"></div>
+<div class="stars stars-medium"></div>
+<div class="stars stars-large"></div>
+
+<div class="container">
+
+    <h1 class="logo">
+        Alliance of the Eclipse
+    </h1>
+
+    <p class="subtitle">
+        Во тьме космоса рождается новая сила.
+        Присоединяйся к Альянсу и стань частью легенды.
+    </p>
+
+    <div class="eclipse"></div>
+
+    <button
+        class="join-btn"
+        onclick="window.open('https://discord.gg/eDNTK7cHpJ','_blank')">
+        Присоединиться в Альянс
+    </button>
+
+    <div class="footer">
+        Alliance of the Eclipse © 2026
+    </div>
+
+</div>
+
+</body>
+  </html>
