@@ -11,50 +11,70 @@ body{overflow:hidden;background:#000;color:#fff}
 .c{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .l{font-size:clamp(3rem,7vw,6rem);font-weight:900;background:linear-gradient(90deg,#b47cff,#6b2cff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-/* BLACK HOLE (FIXED ROUND CORE) */
+/* BLACK HOLE */
 .bh{
 width:240px;height:240px;border-radius:50%;
 position:relative;
-background:radial-gradient(circle at 30% 30%,#0a0010,#000 70%);
+background:radial-gradient(circle at 30% 30%,#06000a,#000 70%);
 box-shadow:0 0 90px rgba(140,60,255,.6);
+overflow:hidden;
 }
 
-/* CORE (perfect circle, no distortion) */
+/* EVENT HORIZON */
 .bh:before{
 content:"";
 position:absolute;
-inset:45px;
+inset:55px;
 border-radius:50%;
-background:radial-gradient(circle,#000 35%,#120018 100%);
-box-shadow:inset 0 0 40px rgba(0,0,0,.8);
+background:#000;
+box-shadow:inset 0 0 40px rgba(0,0,0,.9);
+z-index:5;
 }
 
-/* TILTED ACCRETION DISC (only this is “3D”) */
-.bh:after{
-content:"";
+/* ACCRETION DISC (FRONT ONLY VISIBILITY FIX) */
+.disc{
 position:absolute;
-inset:-55px;
+inset:-70px;
 border-radius:50%;
-background:
-conic-gradient(
+background:conic-gradient(
 from 0deg,
 transparent 0deg,
-rgba(180,120,255,.0) 20deg,
-rgba(180,120,255,.9) 70deg,
-transparent 120deg,
-rgba(255,90,220,.5) 170deg,
-transparent 240deg,
-rgba(120,60,255,.7) 310deg,
+rgba(180,120,255,.0) 25deg,
+rgba(180,120,255,.9) 80deg,
+transparent 140deg,
+rgba(255,80,220,.6) 200deg,
+transparent 260deg,
+rgba(120,60,255,.7) 320deg,
 transparent 360deg
 );
-mask:radial-gradient(circle,transparent 58%,#000 72%);
-filter:blur(1.3px);
-opacity:.85;
-
-/* real tilt without squashing core */
-transform:rotateX(75deg) rotateZ(0deg);
-transform-origin:center;
+filter:blur(1.2px);
+opacity:.9;
 animation:spin 10s linear infinite;
+
+/* tilt */
+transform:rotateX(75deg);
+}
+
+/* FRONT HALF ONLY (fake depth) */
+.disc::after{
+content:"";
+position:absolute;
+inset:0;
+border-radius:50%;
+background:inherit;
+clip-path:ellipse(50% 35% at 50% 65%);
+opacity:.8;
+}
+
+/* BACK SIDE HIDDEN (mask illusion) */
+.disc::before{
+content:"";
+position:absolute;
+inset:0;
+border-radius:50%;
+background:rgba(0,0,0,.6);
+clip-path:ellipse(50% 35% at 50% 35%);
+mix-blend-mode:darken;
 }
 
 @keyframes spin{
@@ -73,14 +93,16 @@ to{transform:rotateX(75deg) rotateZ(360deg)}
 <div class="c">
 <div class="l">ECLIPSE</div>
 
-<div class="bh"></div>
+<div class="bh">
+<div class="disc"></div>
+</div>
 
 <button class="btn">Вступить в Альянс</button>
 </div>
 
 <script>
 
-/* COSMIC BACKGROUND */
+/* COSMIC GRAVITY */
 const bg=document.getElementById("bg"),x=bg.getContext("2d");
 bg.width=innerWidth;bg.height=innerHeight;
 
