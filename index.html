@@ -2,128 +2,144 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
 body{overflow:hidden;background:#000;color:#fff}
-
-/* 3D SPACE CANVAS */
 #bg{position:fixed;inset:0;z-index:0}
 
-/* UI */
+/* UI TOP HUD */
+.hud{position:fixed;top:10px;left:10px;z-index:15;font-size:14px;opacity:.9}
+.top{position:fixed;top:10px;right:10px;z-index:15;font-size:12px;text-align:right;opacity:.9}
+
+/* MAIN */
 .c{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.t{opacity:.7;letter-spacing:8px}
 .l{font-size:clamp(3rem,7vw,6rem);font-weight:900;background:linear-gradient(90deg,#b47cff,#6b2cff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .bh{width:210px;height:210px;border-radius:50%;margin:20px;background:radial-gradient(circle at 30% 30%,#1b0020,#000 60%);box-shadow:0 0 80px #7b2cff;animation:p 4s infinite}
 @keyframes p{50%{transform:scale(1.06)}}
 .btn{padding:12px 28px;margin:6px;border:none;border-radius:999px;background:linear-gradient(45deg,#6b2cff,#b47cff);color:#fff;font-weight:700;cursor:pointer}
 
-/* TOP BUTTON */
-.minig{position:fixed;top:10px;right:10px;z-index:10}
-
 /* MODALS */
 .o{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:20}
 .m{background:rgba(255,255,255,.06);padding:15px;border-radius:15px;border:1px solid rgba(255,255,255,.1)}
 
-/* CLANS */
-.cl{padding:8px;margin:6px;background:rgba(255,255,255,.05);border-radius:8px;cursor:pointer}
-
 /* TETRIS */
 #t{background:#000;border:1px solid #444}
+.ctrl{display:grid;grid-template-columns:repeat(3,50px);gap:5px;justify-content:center;margin-top:10px}
+.ctrl button{padding:10px;background:#6b2cff;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer}
 
-/* CONTROLS TEXT */
-small{opacity:.7}
+/* SCORE INSIDE TETRIS */
+.tui{position:absolute;left:10px;top:10px;font-size:12px}
+.rank{position:absolute;right:10px;top:10px;font-size:12px;text-align:right;max-width:120px}
+.rank small{display:block;opacity:.7}
 </style></head>
 
 <body>
 
 <canvas id="bg"></canvas>
 
-<div class="minig">
-<button class="btn" onclick="openT()">Мини-игры</button>
-<button class="btn" onclick="openC()">Кланы</button>
+<div class="hud">
+Score: <span id="sc">0</span>
+</div>
+
+<div class="top">
+🏆 TOP<br>
+<span id="t1">-</span><br>
+<small id="t2"></small>
 </div>
 
 <div class="c">
-<div class="t">ALLIANCE OF THE</div>
 <div class="l">ECLIPSE</div>
 <div class="bh"></div>
-<button class="btn" onclick="window.open('https://discord.gg/eDNTK7cHpJ','_blank')">Альянс</button>
-</div>
-
-<!-- CLANS -->
-<div class="o" id="cl" onclick="closeM(event)">
-<div class="m">
-<div class="cl" onclick="window.open('https://discord.gg/WnSjf542Qx','_blank')">🌌 Nebula</div>
-<div class="cl">💧 Культ воды</div>
-<div class="cl">✨ Люкверианство</div>
-<div class="cl">🤖 ИИ</div>
-<div class="cl">👁 Imperial of Golden Eye</div>
-</div>
+<button class="btn">Вступить в альянс</button>
+<button class="btn" onclick="openT()">Тетрис</button>
 </div>
 
 <!-- TETRIS -->
 <div class="o" id="tr" onclick="closeM(event)">
-<div class="m">
+<div class="m" style="position:relative">
+
+<div class="tui">SCORE: <span id="ts">0</span></div>
+
+<div class="rank">
+TOP 1: <span id="rt1">-</span>
+<small>TOP 2: <span id="rt2">-</span></small>
+</div>
+
 <canvas id="t" width="200" height="400"></canvas>
-<br><small>← → движение | ↑ поворот | ↓ ускорение</small>
+
+<div class="ctrl">
+<div></div><button onclick="rot()">⟳</button><div></div>
+<button onclick="left()">◀</button><button onclick="down()">▼</button><button onclick="right()">▶</button>
+</div>
+
 </div>
 </div>
 
 <script>
 
-/* ===== 3D SPACE ===== */
-const c=document.getElementById("bg"),x=c.getContext("2d");
-c.width=innerWidth;c.height=innerHeight;
-let s=[...Array(250)].map(()=>({
-x:(Math.random()-0.5)*c.width,
-y:(Math.random()-0.5)*c.height,
-z:Math.random()*c.width
-}));
-function d(){
-x.fillStyle="#000";x.fillRect(0,0,c.width,c.height);
+/* BACKGROUND */
+const bg=document.getElementById("bg"),x=bg.getContext("2d");
+bg.width=innerWidth;bg.height=innerHeight;
+let s=[...Array(200)].map(()=>({x:(Math.random()-0.5)*bg.width,y:(Math.random()-0.5)*bg.height,z:Math.random()*bg.width}));
+(function d(){
+x.fillStyle="#000";x.fillRect(0,0,bg.width,bg.height);
 for(let p of s){
-p.z-=2;if(p.z<=0)p.z=c.width;
-let k=128/p.z;
-let sx=p.x*k+c.width/2;
-let sy=p.y*k+c.height/2;
-if(sx<0||sx>c.width||sy<0||sy>c.height)continue;
+p.z-=2;if(p.z<=0)p.z=bg.width;
+let k=120/p.z;
+let sx=p.x*k+bg.width/2;
+let sy=p.y*k+bg.height/2;
 x.fillStyle="#b47cff";
 x.fillRect(sx,sy,2,2);
 }
 requestAnimationFrame(d);
-}
-d();
+})();
 
-/* ===== MODALS ===== */
-let cl=document.getElementById("cl"),tr=document.getElementById("tr");
-function openC(){cl.style.display="flex"}
+/* MODAL */
+let tr=document.getElementById("tr");
 function openT(){tr.style.display="flex"}
-function closeM(e){if(!e||e.target.classList.contains("o")){cl.style.display="none";tr.style.display="none"}}
+function closeM(e){if(!e||e.target.classList.contains("o"))tr.style.display="none"}
 
-/* ===== TETRIS ===== */
+/* TETRIS */
 const g=document.getElementById("t"),g2=g.getContext("2d");
 const W=10,H=20,S=20;
 let board=[...Array(H)].map(()=>Array(W).fill(0));
-
 let piece=[[1,1,1,1]],x0=3,y0=0;
+
+let score=0;
+let top1=localStorage.getItem("t1")||"---";
+let top2=localStorage.getItem("t2")||"---";
+
+document.getElementById("t1").textContent=top1;
+document.getElementById("t2").textContent=top2;
+document.getElementById("rt1").textContent=top1;
+document.getElementById("rt2").textContent=top2;
+
+function updateTop(){
+if(score>0){
+if(score>Number(top1)||top1==="---"){
+top2=top1;
+top1=score;
+}else if(score>Number(top2)||top2==="---"){
+top2=score;
+}
+localStorage.setItem("t1",top1);
+localStorage.setItem("t2",top2);
+}
+document.getElementById("t1").textContent=top1;
+document.getElementById("t2").textContent=top2;
+document.getElementById("rt1").textContent=top1;
+document.getElementById("rt2").textContent=top2;
+}
 
 function draw(){
 g2.fillStyle="#000";g2.fillRect(0,0,g.width,g.height);
-for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+for(let y=0;y<H;y++)for(let x=0;x<W;x++)
 if(board[y][x]){g2.fillStyle="#7b2cff";g2.fillRect(x*S,y*S,S-1,S-1)}
-}
 for(let y=0;y<piece.length;y++)
 for(let x=0;x<piece[y].length;x++)
 if(piece[y][x]){
 g2.fillStyle="#b47cff";
-g2.fillRect((x0+x)*S,(y0+y)*S,S-1,S-1);
+g2.fillRect((x0+x)*S,(y0+y)*S,S-1,S-1)
 }
-}
-
-function tick(){
-y0++;
-if(coll()){
-y0--;merge();clear();y0=0;
-}
-draw();
-requestAnimationFrame(tick);
+document.getElementById("ts").textContent=score;
+document.getElementById("sc").textContent=score;
 }
 
 function coll(){
@@ -147,20 +163,33 @@ for(let y=H-1;y>=0;y--)
 if(board[y].every(v=>v)){
 board.splice(y,1);
 board.unshift(Array(W).fill(0));
+score+=100;
+updateTop();
 }
 }
 
+function tick(){
+y0++;
+if(coll()){y0--;merge();clear();y0=0}
+draw();
+requestAnimationFrame(tick);
+}
+tick();
+
+/* CONTROLS */
+function left(){x0--;if(coll())x0++}
+function right(){x0++;if(coll())x0--}
+function down(){y0++;if(coll())y0--}
+function rot(){piece=piece[0].map((_,i)=>piece.map(r=>r[i]).reverse())}
+
+/* KEYBOARD */
 document.addEventListener("keydown",e=>{
 if(tr.style.display!="flex")return;
-if(e.key=="ArrowLeft")x0--;
-if(e.key=="ArrowRight")x0++;
-if(e.key=="ArrowDown")y0++;
-if(e.key=="ArrowUp")piece=piece[0].map((_,i)=>piece.map(r=>r[i]).reverse());
-if(coll()){if(e.key=="ArrowLeft")x0++;if(e.key=="ArrowRight")x0--;if(e.key=="ArrowDown")y0--}
+if(e.key=="ArrowLeft")left();
+if(e.key=="ArrowRight")right();
+if(e.key=="ArrowDown")down();
+if(e.key=="ArrowUp")rot();
 });
 
-draw();tick();
-
 </script>
-
 </body></html>
